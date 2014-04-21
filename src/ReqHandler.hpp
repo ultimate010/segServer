@@ -74,14 +74,14 @@ namespace segServer
                 const char * sResult = pProcessor->ParagraphProcess(sentence.c_str() , xiangxi);
                 val.assign(sResult);
                 if(keyword == 1){
-                    sResult = pProcessor->GetKeyWords(sentence.c_str(), 10 , true);
+                    sResult = pProcessor->GetKeyWords(sentence.c_str(), 20 ,xiangxi?true:false);
                 }
                 pProcessor->SetAvailable();
 
                 cout <<endl <<val <<endl;
                 trim(val);
                 if(keyword == 1){
-                    val = val + "      keyword: " + string(sResult);
+                    val = val + "\nkeyword: " + string(sResult);
                     trim(val);
                 }
                 cout <<endl <<val <<endl;
