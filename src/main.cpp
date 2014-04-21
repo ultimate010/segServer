@@ -68,6 +68,7 @@ bool server(const Config& conf, const char * key)
     int encode = GBK_CODE;
     string pidFile;
     string val;
+    string userDict = "";
     if(!conf.get("port", val))
     {
         LogFatal("conf get port failed.");
@@ -91,6 +92,8 @@ bool server(const Config& conf, const char * key)
         LogFatal("conf get pid_file failed.");
         return false;
     }
+    
+    if(!conf.get("dict", userDict)){}
 
 
     ReqHandler reqHandler;
@@ -98,7 +101,9 @@ bool server(const Config& conf, const char * key)
         perror("ICTCLAS INIT FAILED!\n");
         exit(-1);
     }
-
+    if(userDict != ""){
+        reqHandler.loadUserDict(userDict.c_str()); //load user dict 
+    }
     HuskyServer sf(port, threadNum, &reqHandler);
     //sf.init();
     //sf.run();

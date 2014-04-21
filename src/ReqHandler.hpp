@@ -25,39 +25,66 @@ namespace segServer
                     return true;
                 }
             }
+            bool loadUserDict(const char * pfile){
+                ifstream input(pfile);
+                if(input.fail()){
+                    return false;
+                }
+                string line;
+                while(!input.eof()){
+                    getline(input , line);
+                    if(0 == line.size()){
+                        continue;
+                    }
+                    NLPIR_AddUserWord(line.c_str());
+                }
+                return true;
+            }
         public:
             virtual bool do_GET(const HttpReqInfo& httpReq, string& strSnd)
             {
                 string sentence;
-                int xiangxi = 1;
+                int xiangxi = 1,keyword = 1;
                 string val;
                 if(!httpReq.GET("sentence", val)){
-                    return false;
+                    strSnd = "Please input sentence";
+                    strSnd = new_UrlEncode(strSnd);
+                    return true;
                 }
                 //URLDecode(val,sentence);
                 sentence = new_UrlDecode(val);
-                cout <<"'" <<sentence <<"'" <<endl;
+                cout <<endl <<"'" <<sentence <<"'" <<endl;
                 if(!httpReq.GET("info", val)){
-                    return false;
                 }
                 if(val != "1" && val != "0"){
-                    strSnd = "Bad info";
-                    return true;
+                    val = "1";
                 }
                 xiangxi = atoi(val.c_str());
-/*
-                const char * sResult = NLPIR_ParagraphProcess(sentence.c_str() , xiangxi);
-*/
+                if(!httpReq.GET("keyword", val)){
+                }
+                if(val != "1" && val != "0"){
+                    val = "1";
+                }
+                keyword = atoi(val.c_str());
+                //const char * sResult = NLPIR_ParagraphProcess(sentence.c_str() , xiangxi);
                 CNLPIR *pProcessor=GetActiveInstance();
                 while(pProcessor->IsAvailable()){
                     //忙等
                 }
                 const char * sResult = pProcessor->ParagraphProcess(sentence.c_str() , xiangxi);
+                val.assign(sResult);
+                if(keyword == 1){
+                    sResult = pProcessor->GetKeyWords(sentence.c_str(), 10 , true);
+                }
                 pProcessor->SetAvailable();
 
-                val.assign(sResult);
+                cout <<endl <<val <<endl;
                 trim(val);
-                cout <<val <<"|" <<endl;
+                if(keyword == 1){
+                    val = val + "      keyword: " + string(sResult);
+                    trim(val);
+                }
+                cout <<endl <<val <<endl;
                 strSnd = new_UrlEncode(val);
                 LogInfo("response '%s'", strSnd.c_str());
                 return true;
