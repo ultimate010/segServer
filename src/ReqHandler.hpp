@@ -53,7 +53,7 @@ namespace segServer
                 }
                 //URLDecode(val,sentence);
                 sentence = new_UrlDecode(val);
-                cout <<endl <<"'" <<sentence <<"'" <<endl;
+                cout <<endl <<"Req:'" <<sentence <<"'" <<endl;
                 if(!httpReq.GET("info", val)){
                 }
                 if(val != "1" && val != "0"){
@@ -78,13 +78,12 @@ namespace segServer
                 }
                 pProcessor->SetAvailable();
 
-                cout <<endl <<val <<endl;
                 trim(val);
                 if(keyword == 1){
                     val = val + "\nkeyword: " + string(sResult);
                     trim(val);
                 }
-                cout <<endl <<val <<endl;
+                cout <<"Rep:'"  <<val <<"'" <<endl;
                 strSnd = new_UrlEncode(val);
                 LogInfo("response '%s'", strSnd.c_str());
                 return true;
